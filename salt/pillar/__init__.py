@@ -237,7 +237,8 @@ class PillarCache(object):
         # Check the cache!
         if self.minion_id in self.cache:  # Keyed by minion_id
             # TODO Compare grains, etc?
-            if self.saltenv in self.cache[self.minion_id]:
+            minion_cache = self.cache[self.minion_id]
+            if self.saltenv in minion_cache and not minion_cache.needs_update():
                 # We have a cache hit! Send it back.
                 log.debug('Pillar cache hit for minion {0} and saltenv {1}'.format(self.minion_id, self.saltenv))
                 return self.cache[self.minion_id][self.saltenv]

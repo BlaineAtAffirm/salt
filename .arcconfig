@@ -1,0 +1,8 @@
+{
+  "phabricator.uri" : "https://phabricator.team.affirm.com/",
+  "repository.callsign": "saltstack",
+  "history.immutable": false,
+  "git.default-relative-commit": "origin/develop",
+  "arc.land.onto.default": "develop",
+  "base": "git:merge-base(origin/develop)"
+}

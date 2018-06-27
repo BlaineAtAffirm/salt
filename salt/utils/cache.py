@@ -131,6 +131,30 @@ class CacheDisk(CacheDict):
         # Do the same as the parent but also persist
         self._write()
 
+    def needs_update(self):
+        '''
+        return true if the cache should be updated.
+
+        The cache should be updated when the file has been removed from disk
+        '''
+        if os.path.exists(self._path):
+            return False
+        log.debug('cached pillar needs to be updated')
+        return True
+
+    def clear(self):
+        '''
+        Remove the cache file signaling that an update is needed.
+        '''
+        try:
+            os.remove(self._path)
+        except OSError as e:
+            if e.errno == 2:
+                # file was not there
+                pass
+        self._dict = {}
+        self._key_cache_time = {}
+
     def _read(self):
         '''
         Read in from disk
@@ -139,6 +163,7 @@ class CacheDisk(CacheDict):
             return
         with salt.utils.fopen(self._path, 'r') as fp_:
             cache = msgpack.load(fp_)
+
         if "CacheDisk_cachetime" in cache:  # new format
             self._dict = cache["CacheDisk_data"]
             self._key_cache_time = cache["CacheDisk_cachetime"]
