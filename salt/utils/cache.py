@@ -142,7 +142,7 @@ class CacheDisk(CacheDict):
         log.debug('cached pillar needs to be updated')
         return True
 
-    def clear(self):
+    def clear_cache(self):
         '''
         Remove the cache file signaling that an update is needed.
         '''
