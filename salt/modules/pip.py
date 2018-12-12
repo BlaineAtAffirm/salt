@@ -1425,6 +1425,7 @@ def upgrade(bin_env=None,
 
 def list_all_versions(pkg,
                       bin_env=None,
+                      index_url=None,
                       include_alpha=False,
                       include_beta=False,
                       include_rc=False,
@@ -1443,6 +1444,9 @@ def list_all_versions(pkg,
         to the pip to use when more than one Python release is installed (e.g.
         ``/usr/bin/pip-2.7`` or ``/usr/bin/pip-2.6``. If a directory path is
         specified, it is assumed to be a virtualenv.
+
+    index_url
+        Base URL of Python Package Index
 
     include_alpha
         Include alpha versions in the list
@@ -1471,6 +1475,13 @@ def list_all_versions(pkg,
     cmd_kwargs = dict(cwd=cwd, runas=user, output_loglevel='quiet', redirect_stderr=True)
     if bin_env and os.path.isdir(bin_env):
         cmd_kwargs['env'] = {'VIRTUAL_ENV': bin_env}
+
+    if index_url:
+        if not salt.utils.url.validate(index_url, VALID_PROTOS):
+            raise CommandExecutionError(
+                '\'{0}\' is not a valid URL'.format(index_url)
+            )
+        cmd.extend(['--index-url', index_url])
 
     result = __salt__['cmd.run_all'](cmd, **cmd_kwargs)
 

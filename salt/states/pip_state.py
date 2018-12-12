@@ -195,7 +195,7 @@ def _check_pkg_version_format(pkg):
 
 def _check_if_installed(prefix, state_pkg_name, version_spec, ignore_installed,
                         force_reinstall, upgrade, user, cwd, bin_env, env_vars,
-                        pip_list=False, **kwargs):
+                        pip_list=False, index_url=None, **kwargs):
     '''
     Takes a package name and version specification (if any) and checks it is
     installed
@@ -205,6 +205,7 @@ def _check_if_installed(prefix, state_pkg_name, version_spec, ignore_installed,
             to search through to check if the package is installed. If not
             provided, one will be generated in this function by querying the
             system.
+        index_url:  Base URL of Python Package Index
 
     Returns:
      result: None means the command failed to run
@@ -252,7 +253,7 @@ def _check_if_installed(prefix, state_pkg_name, version_spec, ignore_installed,
             available_versions = __salt__['pip.list_all_versions'](
                 prefix_realname, bin_env=bin_env, include_alpha=include_alpha,
                 include_beta=include_beta, include_rc=include_rc, user=user,
-                cwd=cwd)
+                cwd=cwd, index_url=index_url)
             desired_version = ''
             if any(version_spec):
                 for version in reversed(available_versions):
@@ -757,7 +758,7 @@ def installed(name,
                 out = _check_if_installed(prefix, state_pkg_name, version_spec,
                                           ignore_installed, force_reinstall,
                                           upgrade, user, cwd, bin_env, env_vars,
-                                          pip_list, **kwargs)
+                                          pip_list, index_url, **kwargs)
                 # If _check_if_installed result is None, something went wrong with
                 # the command running. This way we keep stateful output.
                 if out['result'] is None:
